@@ -46,7 +46,7 @@ def check_keyup_events(event, ship):
 
 
 
-def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets):
+def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets):
     """ Handles clicks and keyboard events """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -57,12 +57,12 @@ def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y)
+            check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y)
 
 
 
 
-def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y):
+def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets, mouse_x, mouse_y):
     """Starts a new game on Play button click"""
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
@@ -73,6 +73,11 @@ def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bul
         # stats reset
         stats.reset_stats()
         stats.game_active = True
+
+        # reset of score and level
+        sb.prep_score()
+        sb.prep_high_score()
+        sb.prep_level()
 
         # cleans lists of aliens and bullets
         aliens.empty()
@@ -139,9 +144,14 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
             sb.prep_score()
             check_high_score(stats, sb)
     if len(aliens) == 0:
-        # Deletes existing bullets and creates new fleet
+        # if fleet is destructed, new level begins
         bullets.empty()
         ai_settings.increase_speed()
+
+        # level increase
+        stats.level += 1
+        sb.prep_level()
+
         create_fleet(ai_settings, screen, ship, aliens)
 
 
