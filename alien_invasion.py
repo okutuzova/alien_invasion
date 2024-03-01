@@ -20,8 +20,6 @@ def run_game():
     # creates Play button
     play_button = Button(ai_settings, screen, "Play")
 
-
-
     # creates a game statistics object
     stats = GameStats(ai_settings)
 
